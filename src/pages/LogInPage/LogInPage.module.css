@@ -1,0 +1,6 @@
+.layout{
+  margin: 2%;
+  display: flex;
+  align-items: center;
+  min-height: 600px;
+}
