@@ -1,0 +1,11 @@
+.layout {
+  margin: 2%;
+  display: grid;
+  place-items: center;
+  min-height: 600px;
+}
+
+.title {
+  font-size:x-large;
+  font-weight: bold;
+}

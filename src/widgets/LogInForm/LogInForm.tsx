@@ -1,5 +1,6 @@
 import React from 'react';
 import "./LogInForm.css"
+import { Link } from "react-router-dom";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 
@@ -36,16 +37,16 @@ const LogInForm: React.FC = () => {
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
 
-        <a className="login-form-forgot" href="">
+        <Link className="login-form-forgot" to="./RestorePassword">
           Forgot password
-        </a>
+        </Link>
       </Form.Item>
 
       <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button">
           Log in
         </Button>
-        Or <a href="">register now!</a>
+        Or <Link to="../SignUp">register now!</Link>
       </Form.Item>
     </Form>
   );

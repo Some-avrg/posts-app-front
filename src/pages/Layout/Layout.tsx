@@ -13,13 +13,13 @@ const Arrangement = () => {
     <Layout>
       <Header style={{ display: "flex", alignItems: "center" }}>
         <Menu theme="dark" mode="horizontal">
-          <Menu.Item>
+          <Menu.Item key={0}>
             <NavLink to="/">Main</NavLink>
           </Menu.Item>
-          <Menu.Item>
+          <Menu.Item key={1}>
             <NavLink to="/PersonalAccount">PersonalAccount</NavLink>
           </Menu.Item>
-          <Menu.Item>
+          <Menu.Item key={2}>
             <NavLink to="/LogIn">LogIn</NavLink>
           </Menu.Item>
         </Menu>
