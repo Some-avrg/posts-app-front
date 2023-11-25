@@ -1,41 +1,28 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
-
-let SendSignUpForm = async (values: any) => {
+const SendSignUpForm = async (values: any) => {
   const bodyFormData = new FormData();
-  bodyFormData.append('email', values.email);
-  bodyFormData.append('password', values.password);
-  bodyFormData.append('userName', values.username);
-  bodyFormData.append('phone', values.phone);
-  bodyFormData.append('website', values.website);
-  bodyFormData.append('intro', values.intro);
-  bodyFormData.append('gender', values.gender);
- // console.log('bodyFormData: ', [...bodyFormData]);
-  const jsonData = JSON.stringify(Object.fromEntries(bodyFormData));
- // console.log('jsonData: ', jsonData);
+  bodyFormData.append("email", values.email);
+  bodyFormData.append("password", values.password);
+  bodyFormData.append("username", values.username);
+  bodyFormData.append("phone", values.phone);
+  bodyFormData.append("website", values.website);
+  bodyFormData.append("intro", values.intro);
+  bodyFormData.append("gender", values.gender);
 
-  let response = () => {
-    return new Promise(function (resolve, reject) {
-      axios
-        .post(
-        "api/signup",   
-        jsonData,    
-          {headers: {
-            'Content-Type': 'application/json'
-          }}
-        )
-        .then((response) => {
-          resolve(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+  axios
+    .post("api/signup", bodyFormData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response: AxiosResponse) => {
+      alert(response.data.message);
+    })
+    .catch((error: AxiosError) => {
+      alert(JSON.stringify(error.response?.data));
+      console.log(error);
     });
-  };
-
-  let responseData = await response();
-
-  console.log(responseData);
 };
 
 export { SendSignUpForm };
