@@ -1,12 +1,26 @@
-import React from 'react';
-import "./LogInForm.css"
+import React from "react";
+import "./LogInForm.css";
 import { Link } from "react-router-dom";
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { AxiosError } from 'axios';
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, Input } from "antd";
+import { authStore } from "../../features/auth";
+import { useNavigate } from "react-router-dom";
 
 const LogInForm: React.FC = () => {
+  const navigate = useNavigate();
+
   const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
+    const formData = new FormData();
+    formData.append("username", values.username);
+    formData.append("password", values.password);
+    authStore.login(formData)
+    .then(() => {
+      navigate('/');
+    })
+    .catch((error: AxiosError) => {
+      alert(JSON.stringify(error.response?.data));
+    });
   };
 
   return (
@@ -18,13 +32,16 @@ const LogInForm: React.FC = () => {
     >
       <Form.Item
         name="username"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
+        rules={[{ required: true, message: "Please input your Username!" }]}
       >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+        <Input
+          prefix={<UserOutlined className="site-form-item-icon" />}
+          placeholder="Username"
+        />
       </Form.Item>
       <Form.Item
         name="password"
-        rules={[{ required: true, message: 'Please input your Password!' }]}
+        rules={[{ required: true, message: "Please input your Password!" }]}
       >
         <Input
           prefix={<LockOutlined className="site-form-item-icon" />}

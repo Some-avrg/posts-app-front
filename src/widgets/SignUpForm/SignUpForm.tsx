@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { SendSignUpForm } from '../../features/SendSignUpForm';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authStore } from "../../features/auth";
 import { passwordValidator } from '../../features/validators';
 import {
   AutoComplete,
@@ -10,6 +10,7 @@ import {
   Input,
   Select,
 } from 'antd';
+import { AxiosError } from 'axios';
 
 const { Option } = Select;
 
@@ -39,11 +40,25 @@ const tailFormItemLayout = {
 
 const App: React.FC = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
-
-    SendSignUpForm(values);
+    const formData = new FormData();
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("username", values.username);
+    formData.append("phone", values.phone);
+    formData.append("website", values.website);
+    formData.append("intro", values.intro);
+    formData.append("gender", values.gender);
+    
+    authStore.signup(formData)
+    .then(() => {
+      navigate('/LogIn');
+    })
+    .catch((error: AxiosError) => {
+      alert(JSON.stringify(error.response?.data));
+    });
   };
 
   const prefixSelector = (
