@@ -17,10 +17,10 @@ const Arrangement = () => {
             <NavLink to="/">Main</NavLink>
           </Menu.Item>
           <Menu.Item key={1}>
-            <NavLink to="/PersonalAccount">PersonalAccount</NavLink>
+            <NavLink to="/personal-account">PersonalAccount</NavLink>
           </Menu.Item>
           <Menu.Item key={2}>
-            <NavLink to="/LogIn">LogIn</NavLink>
+            <NavLink to="/login">LogIn</NavLink>
           </Menu.Item>
         </Menu>
       </Header>

@@ -1,6 +1,5 @@
 import { instance } from "./api.config";
 
-
 // function getCookie(key: String) {
 //   const b = document.cookie.match("(^|;)\\s*" + key + "\\s*=\\s*([^;]+)");
 //   return b ? b.pop() : "";
@@ -12,8 +11,8 @@ const AuthService = {
       headers: {
         "Content-Type": "application/json",
       },
-    })
-    
+    });
+
     return response;
   },
 
@@ -22,11 +21,15 @@ const AuthService = {
       headers: {
         "Content-Type": "application/json",
       },
-    })
+    });
   },
 
-  refresh() {
-    return instance.post("/api/refreshToken");
+  refresh(token: string) {
+    return instance.post("/api/refreshToken", JSON.stringify({refreshToken: token}), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   },
 
   logout() {

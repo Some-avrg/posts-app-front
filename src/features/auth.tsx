@@ -3,7 +3,7 @@ import { action, makeAutoObservable } from "mobx";
 
 class AuthStore {   
   isAuth = false;
-  isAuthInProgress = false;
+  isAuthInProgress = true;
   
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -15,6 +15,7 @@ class AuthStore {
       await AuthService.login(data)
       .then(action('login success', resp => {
         localStorage.setItem("accessToken", resp.data.accessToken);
+        localStorage.setItem("refreshToken", resp.data.refreshToken);
         this.isAuth = true;
         this.isAuthInProgress = false; 
       }))
@@ -42,33 +43,26 @@ class AuthStore {
       }))  
   }
 
+  //получаем нoвый access token с помощью refresh token
   async checkAuth() {
     this.isAuthInProgress = true;
     try {
-      const resp = await AuthService.refresh();
+      const token = localStorage.getItem("refreshToken");
+      if (!token) throw Error("Refresh token not found");
+      const resp = await AuthService.refresh(token);
+      console.log('Response while checking refresh token: ', resp.data);
       localStorage.setItem("accessToken", resp.data.accessToken);
+      localStorage.setItem("refreshToken", resp.data.refreshToken);
       this.isAuth = true;
 
      } catch (err) {
-      console.log("auth error");
+      console.log("checkAuth error");
      } finally {
       this.isAuthInProgress = false;
     } 
   }
 
-  async logout() {
-    this.isAuthInProgress = true;
-    try {
-      await AuthService.logout();
-      this.isAuth = false;
-      localStorage.removeItem("accessToken");
-    } catch (err) {
-      console.log("logout error");
-    } finally {
-      this.isAuthInProgress = false;
-    } 
-  }
-  
+
 }
 
 const authStore: AuthStore = new AuthStore();

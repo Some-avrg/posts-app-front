@@ -8,10 +8,10 @@ const PrivateRoute = (props: OutletProps) => {
   if (authStore.isAuthInProgress) {
     return <div>Checking auth...</div>;
   }
-  if (authStore.isAuth) {
+  else if (authStore.isAuth) {
      return <Outlet/>
   } else {
-    return <Navigate to="/LogIn" />;
+    return <Navigate to="/login" />;
   }
 };
   

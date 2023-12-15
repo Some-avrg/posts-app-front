@@ -54,7 +54,7 @@ const App: React.FC = () => {
     
     authStore.signup(formData)
     .then(() => {
-      navigate('/LogIn');
+      navigate('/login');
     })
     .catch((error: AxiosError) => {
       alert(JSON.stringify(error.response?.data));
