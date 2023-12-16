@@ -1,30 +1,20 @@
-import { useEffect, useState } from "react";
+import { useReducer, useRef } from "react";
 import { usePost } from "../../features/PostsContext";
 import { VariableSizeList as List } from "react-window";
 import { PostCard } from "../../entities/post/postCard";
 import { getCountOfLines } from "../../shared/usefulFunctions";
 import InfiniteLoader from "react-window-infinite-loader";
 
-const PostsList = () => {
+const PostsList: React.FC = () => {
   const { posts, isPostsLoading, loadMorePosts, hasMorePosts } = usePost();
-  const [postCount, setPostCount] = useState(posts.length);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  let listRef = useRef<List | null>(null);
 
-  //сделать для постоянного postCount!!!!!!!!!!!!!!!!!!!!!!
-
-  useEffect(() => {
-    console.log("Effect!!!!");
-    if (hasMorePosts()) {
-      setPostCount(hasMorePosts() ? posts.length + 1 : posts.length);
-    }
-  }, [posts]);
+  let postCount = hasMorePosts ? posts.length + 1 : posts.length;
 
   const isItemLoaded = (index: any) => {
-    // if (hasMorePosts()) {
-    //   setPostCount(hasMorePosts() ? posts.length + 1 : posts.length);
-    // }
-    return posts[index] !== undefined;
+    return !hasMorePosts || index < posts.length;
   };
-  // const isItemLoaded = (index: any) => false;
 
   // загружаем только одну порцию постов за раз
   // передаём пустой callback в InfiniteLoader если он попросит нас загрузить посты несколько раз
@@ -32,9 +22,16 @@ const PostsList = () => {
 
   const Row = ({ index, style }: { index: any; style: any }) => {
     let content;
-    //console.log("isItemLoaded(" + index + ") = ", isItemLoaded(index));
-    if (posts[index] === undefined) {
+
+    if (!isItemLoaded(index)) {
       content = "Loading...";
+      //Принудительно обновляем компонент после того, как загрузим посты, (хотя они в стейте почему сами не обновляются?)
+      setTimeout(() => {
+        if (listRef?.current) {
+          listRef.current.resetAfterIndex(index);
+        }
+        forceUpdate();
+      }, 200);
     } else {
       content = <PostCard index={index} />;
     }
@@ -42,11 +39,11 @@ const PostsList = () => {
   };
 
   const getItemSize = (index: any) => {
-    //return 133 + 22 * getCountOfLines(posts[index].title.toString());
-    return 155;
+    //т.к. лист запрашивает размер строки до того, как загрузить её, то отправляем ему дефолтное значение
+    if (posts[index] === undefined) return 155;
+    //а потом пересчитываем
+    return 133 + 22 * getCountOfLines(posts[index].title.toString());
   };
-
-  //if (!posts[0]) return <div>Loading...</div>;
 
   return (
     <InfiniteLoader
@@ -62,8 +59,14 @@ const PostsList = () => {
           height={700}
           itemCount={postCount}
           itemSize={getItemSize}
+          estimatedItemSize={155}
           onItemsRendered={onItemsRendered}
-          ref={ref}
+          ref={(list) => {
+            // Передаём List ref в InfiniteLoader
+            ref(list);
+            // и сохраняем копию для себя
+            listRef.current = list;
+          }}
         >
           {Row}
         </List>

@@ -10,17 +10,18 @@ const DEFAULT_COMMENT_LIST: PostComment[] = [];
 
 export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
   const [posts, setPosts] = React.useState(DEFAULT_POST_LIST);
+  const [hasMorePosts, setHasMorePosts] = React.useState(true);
+  const [isPostsLoading, setIsPostsLoading] = React.useState(false);
   const [comments, setComments] = React.useState(DEFAULT_COMMENT_LIST);
-  let isPostsLoading: boolean = false;
-
-  const hasMorePosts = () => {
-    if (posts.length < 111) return true;
-    return false;
-  };
 
   const loadMorePosts = (startIndex: number, stopIndex: number) => {
+    console.log("loading posts: " + startIndex + " - " + stopIndex);
     return new Promise<void>((resolve) => {
-      isPostsLoading = true;
+      if(stopIndex > 99){
+        setHasMorePosts(false);
+        stopIndex = 99;
+      }
+      setIsPostsLoading(true);
       const newPosts = [...posts];
 
       //надо в api поместить
@@ -42,9 +43,8 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
       //   });
 
       setPosts(newPosts);
-      isPostsLoading = false;
-      console.log("loaded more items");
-      resolve();
+      setIsPostsLoading(false);
+      //console.log("loaded posts: " + startIndex + " - " + stopIndex);
     });
   };
 
