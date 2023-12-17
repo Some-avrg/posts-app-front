@@ -6,19 +6,20 @@ import { Comment } from "../../entities/comment/commentCard";
 const CommentsList = (props: any) => {
   const postId = props.postId;
   const { comments, loadComments } = usePost();
-  const [commentsCount, setCommentsCount] = useState(comments.length);
+  const [commentsCount, setCommentsCount] = useState(0);
 
   useEffect(() => {
-    console.log("loading comments");
-    loadComments(postId);
-    //ждём пока не придут комменты с бэка, затем считаем длину списка
-    setTimeout(() => {
-      setCommentsCount(comments.length);
-    }, 100);
-  }, []);
+    if (!comments[0]) {
+      console.log("loading comments");
+      loadComments(postId).then(() =>{
+        //ждём пока не придут комменты с бэка, затем считаем длину списка
+        setCommentsCount(comments.length);
+      })
+    }
+  }, [comments]);
 
-   console.log("Comments = ", comments);
-   console.log("Comments length", comments.length);
+  console.log("Comments = ", comments);
+  console.log("Comments length", comments.length);
 
   const isItemLoaded = (index: any) => {
     return index < comments.length && comments[index] !== null;
@@ -40,8 +41,8 @@ const CommentsList = (props: any) => {
 
   return (
     <List
-      width={400}
-      height={700}
+      width={450}
+      height={600}
       itemCount={commentsCount}
       itemSize={getItemSize}
     >

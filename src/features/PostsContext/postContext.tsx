@@ -5,8 +5,8 @@ export interface PostContextProps{
   comments: PostComment[];
   isPostsLoading: boolean;
   hasMorePosts: boolean;
-  loadComments: (postIndex: number) => void;
-  loadMorePosts: (startIndex: number, stopIndex: number) => void
+  loadComments: (postIndex: number) => Promise<void>;
+  loadMorePosts: (startIndex: number, stopIndex: number) => Promise<void>
 }
 
 export const PostContext = React.createContext<PostContextProps>({
@@ -14,6 +14,6 @@ export const PostContext = React.createContext<PostContextProps>({
   comments: [],
   isPostsLoading: false,
   hasMorePosts: true,
-  loadComments: () => {},
-  loadMorePosts: () => {}
+  loadComments: () => new Promise<void>(() => {}),
+  loadMorePosts: () => new Promise<void>(() => {}),
 })

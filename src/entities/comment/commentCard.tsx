@@ -6,7 +6,7 @@ const Comment = (props: any) => {
   const index: any = props.index;
   const id: string = "post" + index.toString();
   return (
-    <Card title={comments[index].name} bordered={true} style={{ width: 400 }} id={id}>
+    <Card title={comments[index].name} bordered={true} size="small" style={{ width: 400 }} id={id}>
       <p>{comments[index].body}</p>
     </Card>
   );
