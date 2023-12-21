@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { usePost } from "../../features/PostsContext";
-import { VariableSizeList as List} from "react-window";
+import { VariableSizeList as List } from "react-window";
 import { PostCard } from "../../entities/post/postCard";
 import { getCountOfLines } from "../../shared/usefulFunctions";
 import InfiniteLoader from "react-window-infinite-loader";
@@ -8,7 +8,7 @@ import InfiniteLoader from "react-window-infinite-loader";
 const PostsList: React.FC = () => {
   const { posts, isPostsLoading, loadMorePosts, hasMorePosts } = usePost();
   const [postCount, setPostCount] = useState(posts.length);
-  //const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
   let listRef = useRef<List | null>(null);
 
   const isItemLoaded = (index: any) => {
@@ -16,8 +16,9 @@ const PostsList: React.FC = () => {
   };
   useEffect(() => {
     setPostCount(hasMorePosts ? posts.length + 1 : posts.length);
-  }, [posts])
-  
+    // eslint-disable-next-line
+  }, [posts]);
+
   // загружаем только одну порцию постов за раз
   // передаём пустой callback в InfiniteLoader если он попросит нас загрузить посты несколько раз
   const loadMoreItems = isPostsLoading ? () => {} : loadMorePosts;
@@ -51,8 +52,6 @@ const PostsList: React.FC = () => {
       isItemLoaded={isItemLoaded}
       itemCount={postCount}
       loadMoreItems={loadMoreItems}
-      threshold={1}
-      minimumBatchSize={1}
     >
       {({ onItemsRendered, ref }) => (
         <List

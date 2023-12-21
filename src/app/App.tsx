@@ -11,7 +11,6 @@ import { Arrangement } from "../pages/Layout/Layout";
 import PrivateRoute from "../pages/privateRoute";
 import { observer } from "mobx-react-lite";
 import { authStore } from "../features/auth";
-import { postLoader } from "../features/loaders/postloader";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -32,7 +31,6 @@ const App = observer(() => {
           <Route
             path="post/:postId"
             element={<PostPage />}
-            loader={postLoader}
           />
           <Route path="personal-account" element={<PersonalAccount />} />
         </Route>

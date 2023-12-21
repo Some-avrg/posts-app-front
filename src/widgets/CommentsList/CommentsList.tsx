@@ -9,25 +9,27 @@ const CommentsList = (props: any) => {
   const [commentsCount, setCommentsCount] = useState(0);
 
   useEffect(() => {
-    if (!comments[0]) {
-      console.log("loading comments");
-      loadComments(postId).then(() =>{
-        //ждём пока не придут комменты с бэка, затем считаем длину списка
-        setCommentsCount(comments.length);
-      })
-    }
+    (async () => {
+      await loadComments(postId);
+    })();
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    setCommentsCount(comments.length);
+    console.log("commentsCount = ", commentsCount);
+    // eslint-disable-next-line
   }, [comments]);
 
   console.log("Comments = ", comments);
-  console.log("Comments length", comments.length);
 
-  const isItemLoaded = (index: any) => {
-    return index < comments.length && comments[index] !== null;
-  };
+  // const isItemLoaded = (index: any) => {
+  //   return index < comments.length && comments[index] !== null;
+  // };
 
   const Row = ({ index, style }: { index: any; style: any }) => {
     let content;
-    if (!isItemLoaded(index)) {
+    if (!comments[index]) {
       content = "Loading...";
     } else {
       content = <Comment index={index} />;
@@ -45,6 +47,7 @@ const CommentsList = (props: any) => {
       height={600}
       itemCount={commentsCount}
       itemSize={getItemSize}
+      itemData={comments}
     >
       {Row}
     </List>

@@ -1,5 +1,6 @@
 import React from "react";
 import { PostContext } from "./postContext";
+import { DataService } from "../../shared/api.data";
 
 interface PostProviderProps {
   children: React.ReactNode;
@@ -15,62 +16,42 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
   const [comments, setComments] = React.useState(DEFAULT_COMMENT_LIST);
 
   const loadMorePosts = (startIndex: number, stopIndex: number) => {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(async (resolve) => {
       if (stopIndex > 99) {
         setHasMorePosts(false);
         stopIndex = 99;
       }
       setIsPostsLoading(true);
-
-      const newPosts = [...posts];
-      //надо в api поместить
-      fetch(
-        "https://jsonplaceholder.typicode.com/posts/" +
-          (startIndex + 1).toString()
-      )
-        .then((response) => response.json())
-        .then((json) => {
-          newPosts.push(Object.assign({}, json));
-          setPosts(newPosts);
-          setIsPostsLoading(false);
-          console.log("loaded post");
-          resolve();
-        });
+      try {
+        const newPosts = [...posts];
+        const resp = await DataService.load1Post(startIndex + 1);
+        newPosts.push(resp.data);
+        setPosts(newPosts);
+        setIsPostsLoading(false);
+        resolve();
+      } catch (error) {
+        console.log("error while getting post: ", error);
+      }
     });
   };
 
   const loadComments = (postIndex: number) => {
-    return new Promise<void>((resolve) => {
-      const newComments: PostComment[] = [];
-      setComments(newComments);
-      fetch(
-        "https://jsonplaceholder.typicode.com/posts/" +
-          postIndex.toString() +
-          "/comments"
-      )
-        .then((response) => response.json())
-        .then((json) => {
-          json.forEach((val: any) => {
-            newComments.push(Object.assign({}, val));
-          });
-          setComments(newComments);
-          console.log("loaded comments");
-          resolve();
-        });
+    return new Promise<void>(async (resolve) => {
+      const newComments = [...comments];
+      
+      try{
+        const resp = await DataService.loadAllComments(postIndex);
+        resp.data.forEach((val: any) => {
+          newComments.push(val);
+        })
+        setComments(newComments);
+        resolve();
+      }
+      catch(error){
+        console.log("error while loading comments: ", error);
+      }
     });
   };
-
-  // const value = React.useMemo(
-  //   () => ({
-  //     posts,
-  //     comments,
-  //     isPostsLoading,
-  //     hasMorePosts,
-  //     loadMorePosts,
-  //     loadComments,
-  //   }),
-  //   [posts, comments, isPostsLoading, hasMorePosts, loadMorePosts, loadComments]
-  // );
 
   const value = {
     posts,
